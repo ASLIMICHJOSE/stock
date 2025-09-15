@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zyraa Fashion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sansation:wght@300&display=swap" rel="stylesheet">
+  
+  <style>
+       * {
+            text-decoration: none;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #fff;
+            font-family: 'Sansation', sans-serif;
+            font-weight: 300;
+            font-style: normal;
+        }
+
+        #head {
+            margin-top: 10px;
+        }
+
+        /* Header Styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 30px;
+            background-color: #fff;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-btn {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding-right: 50px;
+        }
+
+        .menu-btn .bar {
+            display: block;
+            width: 32px;
+            height: 1px;
+            background: #222;
+            border-radius: 2px;
+            transition: transform 0.4s, opacity 0.4s;
+        }
+
+        .menu-btn.active .bar:nth-child(1) {
+            transform: translateY(11px) rotate(55deg);
+        }
+
+        .menu-btn.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-btn.active .bar:nth-child(3) {
+            transform: translateY(-11px) rotate(-55deg);
+        }
+
+        #hello {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 0;
+            padding-left: 100px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 80px;
+        }
+
+        .header-right span {
+            cursor: pointer;
+        }
+
+        #openSearch {
+            transform: translateX(18px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+            padding-bottom: 5px;
+            display: inline-block;
+            width: 150px;
+            position: relative;
+            cursor: pointer;
+        }
+        #coll-1{
+            cursor: pointer;
+            color: #000000;
+        }
+
+        /* Tablet View Adjustments */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            header {
+                padding: 4px 20px;
+            }
+
+            .header-left {
+                gap: 12px; /* Reduced spacing */
+            }
+
+            #hello {
+                font-size: 28px;
+                padding-left: 80px; /* Slightly reduced */
+            }
+
+            .header-right {
+                gap: 40px; /* Reduced spacing */
+                flex-direction: row; /* Same as desktop */
+                align-items: center;
+            }
+
+            #openSearch {
+                width: 120px;
+                transform: translateX(10px);
+                display: inline-block; /* Same as desktop */
+            }
+
+            #navMenu {
+                max-height: none; /* Always visible like desktop */
+                opacity: 1;
+                flex-direction: row; /* Horizontal layout like desktop */
+                align-items: center;
+                width: auto;
+                padding: 0;
+                background: none;
+                border-top: none;
+                overflow: visible; /* Ensure no clipping */
+            }
+
+            #navMenu > p.search-trigger,
+            #navMenu > span {
+                display: inline-block; /* Inline like desktop */
+                width: auto;
+                text-align: center;
+                font-size: 16px;
+                padding: 5px 0; /* Reduced padding */
+                border-bottom: none;
+            }
+
+            .menu-btn {
+                display: flex; /* Show menu button in tablet view like desktop */
+                padding-right: 30px; /* Reduced spacing */
+            }
+        }
+
+        /* Mobile View */
+        @media (max-width: 767px) {
+            #navMenu {
+                max-height: 0;
+                opacity: 0;
+                overflow: hidden;
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+                gap: 15px;
+                padding: 0 15px;
+                background: #fff;
+                border-top: 1px solid #ddd;
+                transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.3s ease;
+            }
+
+            #navMenu.show {
+                max-height: 500px;
+                opacity: 1;
+                padding: 15px;
+            }
+
+            #navMenu > p.search-trigger,
+            #navMenu > span {
+                display: block;
+                width: 100%;
+                text-align: left;
+                font-size: 16px;
+                cursor: pointer;
+                padding: 10px 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            #openSearch {
+                margin: 0;
+                transform: none;
+            }
+
+            .menu-btn {
+                display: flex; /* Ensure menu button is visible in mobile view */
+            }
+
+            .header-left {
+                gap: 10px;
+            }
+
+            #hello {
+                font-size: 26px;
+                padding-left: 20px; /* Reduced padding for better alignment */
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+                padding: 4px 10px;
+            }
+
+            .header-left {
+                width: 100%;
+                justify-content: flex-start;
+                gap: 10px;
+                padding-left: 0;
+            }
+
+            #hello {
+                font-size: 24px;
+                padding-left: 10px; /* Further reduced for small screens */
+                margin-top: 8px;
+            }
+        }
+        @media (min-width: 768px) and (max-width: 1024px) {
+    header {
+        padding: 4px 20px;
+    }
+
+    .header-left {
+        gap: 12px; /* Reduced spacing */
+    }
+
+    #hello {
+        font-size: 28px;
+        padding-left: 80px; /* Slightly reduced */
+    }
+
+    .header-right {
+        gap: 40px; /* Reduced spacing */
+        flex-direction: row; /* Horizontal layout like desktop */
+        align-items: center;
+    }
+
+    .header-right input {
+        padding-right: 30px; /* Reduced spacing */
+    }
+
+    #openSearch {
+        width: 120px;
+        transform: translateX(10px);
+        display: inline-block; /* Same as desktop */
+    }
+
+    #navMenu {
+        max-height: none; /* Always visible like desktop */
+        opacity: 1;
+        flex-direction: row; /* Horizontal layout like desktop */
+        align-items: center;
+        width: auto;
+        padding: 0;
+        background: none;
+        border-top: none;
+        overflow: visible; /* Ensure no clipping */
+    }
+
+    #navMenu > p.search-trigger,
+    #navMenu > span {
+        display: inline-block; /* Inline like desktop */
+        width: auto;
+        text-align: center;
+        font-size: 16px;
+        padding: 5px 0; /* Reduced padding */
+        border-bottom: none;
+    }
+
+    .menu-btn {
+        display: flex; /* Show menu button in tablet view like desktop */
+        padding-right: 30px; /* Reduced spacing */
+    }
+}
+    /* Hero Section */
+    .hero {
+      width: 100%;
+      max-width: 1450px;
+      height: 400px;
+      overflow: hidden;
+      margin: 0 auto;
+      margin-top: 50px;
+      display: flex;
+    }
+
+    .hero-img {
+      flex: 0.5;
+      position: relative;
+      margin: 0;
+      height: 100%;
+    }
+
+    .hero-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      vertical-align: top;
+    }
+  
+
+    /* Mobile View Adjustments */
+    @media (max-width: 767px) {
+      .hero {
+        max-width: 100%;
+        height: 200px;
+        padding: 0 10px;
+      }
+
+      .hero-img {
+        flex: 1;
+        margin: 0;
+      }
+
+      .hero-img img {
+        height: 100%;
+        max-width: 100%;
+      }
+    }
+
+    /* Offers Section */
+    .offers {
+      padding: 20px;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .offers h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .offer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+      max-width: 1450px;
+      margin: 0 auto;
+    }
+
+    .img-wrapper {
+      position: relative;
+      display: flex;
+    }
+
+    .offer-item img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      display: block;
+      border-radius: 5px;
+    }
+
+    .offer-strip {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100%;
+      background: #b1a8a7;
+      color: #eedada;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      border-radius: 0 5px 5px 0;
+    }
+
+    /* Responsive Adjustments for Offer Section */
+    @media (max-width: 767px) {
+      .offer-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+      }
+
+      .offer-item img {
+        height: 200px;
+      }
+
+      .offer-strip {
+        width: 60px;
+        font-size: 16px;
+      }
+    }
+
+    /* Categories */
+    .categories {
+      padding: 50px; /* From sample */
+      gap: 20px; /* From sample */
+    }
+
+    .categories h2 {
+      margin-bottom: 50px; /* From sample */
+      font-size: 22px;
+      text-transform: lowercase; /* From sample */
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr); /* 6 images per row */
+      gap: 45px; /* From sample .grid */
+      width: 100%;
+      max-width: 1450px; /* Match hero and offer sections */
+      margin: 0 auto;
+    }
+
+    .card {
+      border-radius: 12px;
+      border: none;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .card-img-top {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 5px; /* From sample .grid img */
+      background: #fff; /* From sample .product-grid img */
+    }
+
+    .product-grid span {
+      display: block;
+      margin-top: 5px;
+      font-size: 14px;
+      text-align: center;
+      color: #333;
+      text-transform: capitalize;
+    }
+
+    /* Responsive Adjustments for Categories */
+    @media (max-width: 576px) {
+      .product-grid {
+        grid-template-columns: 1fr; /* Single column on small screens */
+        gap: 20px; /* From sample .product-grid */
+      }
+      .card-img-top {
+        height: 180px;
+      }
+    }
+
+    @media (min-width: 577px) and (max-width: 767px) {
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
+        gap: 20px; /* From sample .product-grid */
+      }
+      .card-img-top {
+        height: 200px;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 991px) {
+      .product-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for medium screens */
+        gap: 20px; /* From sample .product-grid */
+      }
+      .card-img-top {
+        height: 200px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .product-grid {
+        grid-template-columns: repeat(6, 1fr); /* 6 columns for large screens */
+        gap: 45px; /* From sample .grid */
+      }
+      .card-img-top {
+        height: 260px;
+      }
+    }
+
+    /* Placeholder for missing images */
+    .placeholder {
+      background-color: #ccc;
+      width: 150px;
+      height: 150px;
+    }
+
+    /* Wrapper for Vertical Stacking */
+    .main-content {
+      padding: 0 10px;
+      max-width: 100%;
+    }
+
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .hero {
+    display: flex;
+    justify-content: center; /* center the two images */
+  
+    max-width: 1200px; /* shrink the hero container */
+    height: 400px; /* keep height same as desktop */
+    margin: 10px auto 0 auto;
+  }
+
+  .hero-img {
+    flex: 1; /* equal width */
+    max-width: 580px; /* make each image shrink */
+  }
+
+  .hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* keep aspect ratio */
+  }
+}
+
+
+
+    /* Adjustments for 1024px (laptop screens) */
+@media (min-width: 992px) and (max-width: 1440px) {
+  
+
+  /* Hero section */
+  .hero {
+    height: 350px; /* slightly shorter to fit screen */
+  }
+  .hero-img img {
+    object-fit: cover; /* ensures no zoomed effect */
+  }
+
+  /* Offers section */
+  .offer-grid {
+    gap: 15px; /* slightly reduce spacing */
+  }
+  .offer-item img {
+    height: 250px; /* adjust to fit screen better */
+  }
+  .offer-strip {
+    width: 80px; /* narrower strip for smaller screen */
+    font-size: 16px;
+  }
+
+  /* Categories */
+  .product-grid {
+    gap: 30px; /* reduce spacing between cards */
+  }
+  .card-img-top {
+    height: 220px; /* adjust to fit screen better */
+  }
+}
+
+
+/* Hero Section for 768px - no gap, same look as desktop */
+@media (max-width: 769px) {
+  .hero {
+    max-width: 1200px; /* Shrink container to fit screen */
+    height: 230px;      /* Reduce height */
+    margin: 50px auto 0 auto;
+    display: flex;
+    gap: 0;             /* No space between images */
+  }
+
+  .hero-img {
+    flex: 1;            /* Equal width for both images */
+    max-width: 50%;     /* Each takes half of hero container */
+    height: 100%;
+  }
+
+  .hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* Keep image aspect ratio */
+    display: block;
+  }
+}
+
+
+/* Hero Section for 425px */
+@media (max-width: 426px) {
+  .hero {
+    max-width: 100%;
+    height: 130px;  /* Adjust height */
+    margin: 50px auto 0 auto;
+    display: flex;
+    gap: 0;         /* No space between images */
+  }
+
+  .hero-img {
+    flex: 1;        /* Equal width for both images */
+    max-width: 50%; /* Each takes half */
+    height: 100%;
+  }
+
+  .hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+/* Hero Section for 375px */
+@media (max-width: 376px) {
+  .hero {
+    max-width: 100%;
+    height: 130px;  /* Slightly smaller height */
+    margin: 50px auto 0 auto;
+    display: flex;
+    gap: 0;         /* No space between images */
+  }
+
+  .hero-img {
+    flex: 1;
+    max-width: 50%;
+    height: 100%;
+  }
+
+  .hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+/* Hero Section for 320px */
+@media (max-width: 321px) {
+  .hero {
+    max-width: 100%;
+    height: 100px;  /* Smallest height */
+    margin: 50px auto 0 auto;
+    display: flex;
+    gap: 0;
+  }
+
+  .hero-img {
+    flex: 1;
+    max-width: 50%;
+    height: 100%;
+  }
+
+  .hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+/* Offer Section - Mobile View (3 in a row) */
+@media (max-width: 769px) {
+  .offer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    gap: 10px; /* optional spacing */
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .offer-item img {
+    height: 100px; /* adjust height for smaller screen */
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .offer-strip {
+    width: 40px; /* smaller strip for mobile */
+    font-size: 12px;
+  }
+}
+
+/* Categories - Mobile View (2 images per row) */
+@media (max-width: 767px) {
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 15px; /* spacing between cards */
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .card-img-top {
+    height: 150px; /* adjust height for smaller screens */
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .product-grid span {
+    font-size: 12px; /* smaller text for mobile */
+  }
+}
+
+
+
+
+  </style>
+</head>
+<body>
+  <section id="head">
+        <header>
+            <div class="header-left">
+                <div class="menu">
+                    <button id="menu-btn" class="menu-btn">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </button>
+                </div>
+                <h1 id="hello">ZYRAA</h1>
+            </div>
+            <div class="header-right" id="navMenu">
+                <p id="openSearch" class="search-trigger">Search</p>
+                <span>Login</span>
+                 <a href="history.html">
+                <span id="coll-1">Add to collection</span>
+                </a>
+            </div>
+        </header>
+    </section>
+
+  <div class="main-content">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-img">
+        <img src="1.jpg" alt="Model 1">
+      </div>
+      <div class="hero-img">
+        <img src="2.jpg" alt="Model 2">
+      </div>
+    </section>
+
+    <!-- Offers Section -->
+    <section class="offers">
+    
+      <div class="offer-grid">
+        <div class="offer-item">
+          <div class="img-wrapper">
+            <img src="15.jpg" alt="Offer 1">
+            <span class="offer-strip">Offer</span>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="img-wrapper">
+            <img src="16.jpg" alt="Offer 2">
+            <span class="offer-strip">Offer</span>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="img-wrapper">
+            <img src="17.jpg" alt="Offer 3">
+            <span class="offer-strip">Offer</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories">
+      <h2>categories</h2>
+      <div class="product-grid">
+        <div class="card">
+          <a href="black.html">
+            <img src="5.jpg" alt="Shirt" class="card-img-top">
+            <span>Shirt</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="pants.html">
+            <img src="4.jpg" alt="Pants" class="card-img-top">
+            <span>Pants</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="whitetshirt.html">
+            <img src="3.jpg" alt="T-shirt" class="card-img-top">
+            <span>T-shirt</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="short.html">
+            <img src="6.jpg" alt="Shorts" class="card-img-top">
+            <span>Shorts</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="dress.html">
+            <img src="7.jpg" alt="Dress" class="card-img-top">
+            <span>Dress</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="tanktop.html">
+            <img src="8.jpg" alt="Tank Top" class="card-img-top">
+            <span>Tank Top</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="jacket.html">
+            <img src="9.jpg" alt="Jacket" class="card-img-top">
+            <span>Jacket</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="sweater.html">
+            <img src="10.jpg" alt="Sweater" class="card-img-top">
+            <span>Sweater</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="skirt.html">
+            <img src="11.jpg" alt="Skirt" class="card-img-top">
+            <span>Skirt</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="coat.html">
+            <img src="12.jpg" alt="Shoe" class="card-img-top">
+            <span>Coat</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="partywear.html">
+            <img src="13.jpg" alt="Party Wear" class="card-img-top">
+            <span>Party Wear</span>
+          </a>
+        </div>
+        <div class="card">
+          <a href="Jeans.html">
+            <img src="14.jpg" alt="Jeans" class="card-img-top">
+            <span>Jeans</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+  
+  <script>
+    document.getElementById('menu-btn').addEventListener('click', function () {
+            this.classList.toggle('active');
+            document.getElementById('navMenu').classList.toggle('show');
+        });
+
+        document.getElementById("openSearch").addEventListener("click", function() {
+            window.location.href = "search.html";
+        });
+
+        document.querySelectorAll('#navMenu > span, #navMenu > p').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 767) {
+                    document.getElementById('navMenu').classList.remove('show');
+                    document.getElementById('menu-btn').classList.remove('active');
+                }
+            });
+        });
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZYRAA - PANTS</title>
+  <!-- ✅ Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Sansation:wght@300&display=swap" rel="stylesheet">
+
+  <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Sansation', sans-serif;
+    font-weight: 300;
+    font-style: normal;
+    margin-top: 10px;
+    background-color: #fff;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ==== Header ==== */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 30px;
+    background-color: #fff;
+  }
+
+  .left-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  #hello {
+    font-size: 30px;
+    font-weight: bold;
+    padding-left: 100px;
+    margin: 0;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+  }
+
+  #openSearch {
+    transform: translateX(18px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    padding-bottom: 5px;
+    width: 150px;
+    cursor: pointer;
+  }
+
+
+  /* ==== Menu Button ==== */
+  .menu-btn {
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .menu-btn .bar {
+    width: 32px;
+    height: 2px;              
+    background: #222;
+    border-radius: 2px;
+    transition: transform 0.4s, opacity 0.4s;
+  }
+
+  /* Hamburger to X transition */
+  .menu-btn.active .bar:nth-child(1) {
+    transform: translateY(13px) rotate(55deg);
+  }
+  .menu-btn.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .menu-btn.active .bar:nth-child(3) {
+    transform: translateY(-11px) rotate(-55deg);
+  }
+
+  /* ==== Responsive Navbar ==== */
+  @media (max-width: 768px) {
+    #navMenu {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      gap: 15px;
+      padding: 0 15px;
+      background: #fff;
+      border-top: 1px solid #fff;
+      transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.3s ease;
+    }
+    #navMenu.show {
+      max-height: 500px;
+      opacity: 1;
+      padding: 15px;
+    }
+
+    #navMenu > p.search-trigger,
+    #navMenu > span {
+      display: block;
+      width: 100%;
+      text-align: left;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 10px 0;
+      border-bottom: 1px solid #fff;
+    }
+
+    #openSearch {
+      margin: 0;
+      transform: none !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      padding-left: 5px;
+    }
+    .left-section {
+      width: 100%;
+      justify-content: flex-start;
+      gap: 10px;
+      padding-left: 0;
+    }
+    #hello {
+      font-size: 26px;
+      padding-left: 100px;
+      margin-top: 8px;
+    }
+  }
+
+  /* ==== Product Cards ==== */
+  .card {
+    border-radius: 12px;
+    border: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+
+  .card-img-top {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+  }
+
+  .product-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .price {
+    font-size: 0.95rem;
+    color: #333;
+  }
+
+  /* ==== Responsive Images & Text ==== */
+  @media (max-width: 576px) {
+    .card-img-top { height: 180px; }
+    .product-name { font-size: 0.85rem; }
+    .price { font-size: 0.8rem; }
+  }
+
+  @media (min-width: 577px) and (max-width: 768px) {
+    .card-img-top { height: 200px; }
+    .product-name { font-size: 0.9rem; }
+  }
+
+  @media (min-width: 992px) {
+    .card-img-top { height: 260px; }
+    .product-name { font-size: 1.05rem; }
+    .price { font-size: 1rem; }
+  }
+
+  /* ==== Search Row Styling ==== */
+/* ==== Search Row Styling ==== */
+
+
+.search-row .title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.search-row .title a.clear {
+  text-decoration: none;
+  color: #888;
+  font-weight: bold;
+  margin-left: 6px;
+}
+
+.search-row .filters {
+  text-decoration: none;
+  color: #676666;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 12px;
+  border: none;      /* <-- remove the line completely */
+  border-radius: 8px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.search-row .filters:hover {
+  background-color: #fff;
+  color: #515050;
+  text-decoration: none;
+}
+
+
+
+  
+  </style>
+</head>
+<body>
+
+  <!-- ==== Header ==== -->
+  <section id="head">
+    <header>
+      <div class="left-section">
+        <button id="menu-btn" class="menu-btn">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+        <h1 id="hello">ZYRAA</h1>
+      </div>
+      <div class="header-right" id="navMenu">
+        <p id="openSearch" class="search-trigger">Search</p>
+        <span>Login</span>
+        <span>Add to collection</span>
+      </div>
+    </header>
+  </section>
+
+  <!-- ==== Added Search Row ==== -->
+  <!-- ==== Added Search Row ==== -->
+<div class="container">
+  <div class="search-row d-flex flex-wrap align-items-center justify-content-between pt-3 mb-4">
+    <div class="title d-flex align-items-center">
+      Pants <a href="index.html" class="clear">✕</a>
+    </div>
+  <a href="#" class="filters">FILTERS</a>
+
+  </div>
+</div>
+
+
+  <!-- ==== Product Grid ==== -->
+  <main class="container my-4">
+    <div class="row g-4">
+
+      <!-- 12 Products -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder1.jpg" class="card-img-top" alt="KINOMO PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">KINOMO PANT</h4>
+            <div class="price">₹4,000.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder2.jpg" class="card-img-top" alt="ANOTHER PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">THREAD PANT</h4>
+            <div class="price">₹3,500.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder3.jpg" class="card-img-top" alt="CLASSIC PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">CLASSIC PANT</h4>
+            <div class="price">₹2,800.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder4.jpg" class="card-img-top" alt="SUMMER PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">SUMMER PANT</h4>
+            <div class="price">₹3,200.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder5.jpg" class="card-img-top" alt="URBAN PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">URBAN PANT</h4>
+            <div class="price">₹3,000.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder6.jpg" class="card-img-top" alt="TRENDY PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">TRENDY PANT</h4>
+            <div class="price">₹3,700.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder7.jpg" class="card-img-top" alt="MODERN PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">MODERN PANT</h4>
+            <div class="price">₹3,900.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder8.jpg" class="card-img-top" alt="STREET PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">STREET PANT</h4>
+            <div class="price">₹3,600.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder9.jpg" class="card-img-top" alt="SPORT PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">SPORT PANT</h4>
+            <div class="price">₹3,800.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder10.jpg" class="card-img-top" alt="DENIM PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">DENIM PANT</h4>
+            <div class="price">₹4,200.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder11.jpg" class="card-img-top" alt="CASUAL PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">CASUAL PANT</h4>
+            <div class="price">₹2,900.00</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-6 col-md-4 col-lg-3">
+        <article class="card h-100">
+          <a href="shirt.html"><img src="pants/placeholder13.jpg" class="card-img-top" alt="ELEGANT PANT"></a>
+          <div class="card-body text-center">
+            <h4 class="product-name">ELEGANT PANT</h4>
+            <div class="price">₹3,300.00</div>
+          </div>
+        </article>
+      </div>
+
+<div class="col-6 col-md-4 col-lg-3">
+  <article class="card h-100">
+    <a href="pant.html"><img src="pants/placeholder14.jpg" class="card-img-top" alt="Classic Chino Pant"></a>
+    <div class="card-body text-center">
+      <h4 class="product-name">Classic Chino Pant</h4>
+      <div class="price">₹3,499.00</div>
+    </div>
+  </article>
+</div>
+
+<div class="col-6 col-md-4 col-lg-3">
+  <article class="card h-100">
+    <a href="pant.html"><img src="pants/placeholder15.jpg" class="card-img-top" alt="Slim Fit Trouser"></a>
+    <div class="card-body text-center">
+      <h4 class="product-name">Slim Fit Trouser</h4>
+      <div class="price">₹3,399.00</div>
+    </div>
+  </article>
+</div>
+
+<div class="col-6 col-md-4 col-lg-3">
+  <article class="card h-100">
+    <a href="pant.html"><img src="pants/placeholder16.jpg" class="card-img-top" alt="Urban Cargo Pant"></a>
+    <div class="card-body text-center">
+      <h4 class="product-name">Urban Cargo Pant</h4>
+      <div class="price">₹3,400.00</div>
+    </div>
+  </article>
+</div>
+
+<div class="col-6 col-md-4 col-lg-3">
+  <article class="card h-100">
+    <a href="pant.html"><img src="pants/placeholder17.jpg" class="card-img-top" alt="Premium Formal Pant"></a>
+    <div class="card-body text-center">
+      <h4 class="product-name">Premium Formal Pant</h4>
+      <div class="price">₹3,500.00</div>
+    </div>
+  </article>
+</div>
+
+<div class="col-6 col-md-4 col-lg-3">
+  <article class="card h-100">
+    <a href="pant.html"><img src="pants/placeholder18.jpg" class="card-img-top" alt="Comfort Stretch Pant"></a>
+    <div class="card-body text-center">
+      <h4 class="product-name">Comfort Stretch Pant</h4>
+      <div class="price">₹3,600.00</div>
+    </div>
+  </article>
+</div>
+
+<div class="col-6 col-md-4 col-lg-3">
+  <article class="card h-100">
+    <a href="pant.html"><img src="pants/placeholder19.jpg" class="card-img-top" alt="Weekend Jogger Pant"></a>
+    <div class="card-body text-center">
+      <h4 class="product-name">Weekend Jogger Pant</h4>
+      <div class="price">₹3,700.00</div>
+    </div>
+  </article>
+</div>
+
+<div class="col-6 col-md-4 col-lg-3">
+  <article class="card h-100">
+    <a href="pant.html"><img src="pants/placeholder20.jpg" class="card-img-top" alt="Heritage Denim Pant"></a>
+    <div class="card-body text-center">
+      <h4 class="product-name">Heritage Denim Pant</h4>
+      <div class="price">₹3,800.00</div>
+    </div>
+  </article>
+</div>
+
+<div class="col-6 col-md-4 col-lg-3">
+  <article class="card h-100">
+    <a href="pant.html"><img src="pants/placeholder12.jpg" class="card-img-top" alt="Essential Workwear Pant"></a>
+    <div class="card-body text-center">
+      <h4 class="product-name">Essential Workwear Pant</h4>
+      <div class="price">₹3,900.00</div>
+    </div>
+  </article>
+</div>
+
+
+    </div>
+  </main>
+
+  <!-- ✅ Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ==== JS for menu ==== -->
+  <script>
+    document.getElementById('menu-btn').addEventListener('click', function () {
+      this.classList.toggle('active');
+      document.getElementById('navMenu').classList.toggle('show');
+    });
+
+    document.getElementById("openSearch").addEventListener("click", function() {
+      window.location.href = "search.html";
+    });
+
+    document.querySelectorAll('#navMenu > span, #navMenu > p').forEach(item => {
+      item.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+          document.getElementById('navMenu').classList.remove('show');
+          document.getElementById('menu-btn').classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
