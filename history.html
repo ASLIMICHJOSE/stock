@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zyraa Order History</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sansation:wght@300&display=swap" rel="stylesheet">
+  <style>
+     *{
+            text-decoration: none;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #faf9f6;
+            font-family: 'Sansation', sans-serif;
+            font-weight: 300;
+            font-style: normal;
+        }
+
+        #head {
+            margin-top: 10px;
+        }
+
+        /* Header Styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 30px;
+            background-color: #faf9f6;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-btn {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding-right: 50px;
+        }
+
+        .menu-btn .bar {
+            display: block;
+            width: 32px;
+            height: 1px;
+            background: #222;
+            border-radius: 2px;
+            transition: transform 0.4s, opacity 0.4s;
+        }
+
+        .menu-btn.active .bar:nth-child(1) {
+            transform: translateY(11px) rotate(55deg);
+        }
+
+        .menu-btn.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-btn.active .bar:nth-child(3) {
+            transform: translateY(-11px) rotate(-55deg);
+        }
+
+        #hello {
+            margin-right: 100px;
+            font-size: 30px;
+            font-weight: bold;
+            margin: 0;
+            padding-left: 58px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 265px;
+        }
+
+        .header-right span {
+            cursor: pointer;
+        }
+
+        #openSearch {
+            transform: translateX(18px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+            padding-bottom: 5px;
+            display: inline-block;
+            width: 150px;
+            position: relative;
+            cursor: pointer;
+            margin-left: 150px;
+        }
+
+        /* Tablet View Adjustments */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            header {
+                padding: 4px 20px;
+            }
+
+            .header-left {
+                gap: 12px; /* Reduced spacing */
+            }
+
+            #hello {
+                font-size: 28px;
+                padding-left: 80px; /* Slightly reduced */
+            }
+
+            .header-right {
+                gap: 40px; /* Reduced spacing */
+                flex-direction: row; /* Same as desktop */
+                align-items: center;
+            }
+
+            #openSearch {
+                width: 120px;
+                transform: translateX(10px);
+                display: inline-block; /* Same as desktop */
+            }
+
+            #navMenu {
+                max-height: none; /* Always visible like desktop */
+                opacity: 1;
+                flex-direction: row; /* Horizontal layout like desktop */
+                align-items: center;
+                width: auto;
+                padding: 0;
+                background: none;
+                border-top: none;
+                overflow: visible; /* Ensure no clipping */
+            }
+
+            #navMenu > p.search-trigger,
+            #navMenu > span {
+                display: inline-block; /* Inline like desktop */
+                width: auto;
+                text-align: center;
+                font-size: 16px;
+                padding: 5px 0; /* Reduced padding */
+                border-bottom: none;
+            }
+
+            .menu-btn {
+                display: flex; /* Show menu button in tablet view like desktop */
+                padding-right: 30px; /* Reduced spacing */
+            }
+        }
+
+        /* Mobile View */
+        @media (max-width: 767px) {
+            #navMenu {
+                max-height: 0;
+                opacity: 0;
+                overflow: hidden;
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+                gap: 15px;
+                padding: 0 15px;
+                background: #faf9f6;
+                border-top: 1px solid #ddd;
+                transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.3s ease;
+            }
+
+            #navMenu.show {
+                max-height: 500px;
+                opacity: 1;
+                padding: 15px;
+            }
+
+            #navMenu > p.search-trigger,
+            #navMenu > span {
+                display: block;
+                width: 100%;
+                text-align: left;
+                font-size: 16px;
+                cursor: pointer;
+                padding: 10px 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            #openSearch {
+                margin: 0;
+                transform: none;
+            }
+
+            .menu-btn {
+                display: flex; /* Ensure menu button is visible in mobile view */
+            }
+
+            .header-left {
+                gap: 10px;
+            }
+
+            #hello {
+                font-size: 26px;
+                padding-left: 20px; /* Reduced padding for better alignment */
+             }
+             .order-card{
+              width: 100%;
+              max-width: 500px;
+              margin-left: 100px;
+             }
+            }
+            /* Dropdown menu */
+.dropdown {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: none;
+  flex-direction: column;
+  margin-top: 20px;
+  right: 3px; /* align with your sort text */
+  z-index: 100;
+}
+
+.dropdown p {
+  padding: 10px 22px;
+  margin: 0;
+  cursor: pointer;
+  font-size: 0.95em;
+}
+
+.dropdown p:hover {
+  background: #f3f3f3;
+}
+
+.sort {
+  position: relative; /* for dropdown positioning */
+}
+
+
+        @media (max-width: 480px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+                padding: 4px 10px;
+            }
+
+            .header-left {
+                width: 100%;
+                justify-content: flex-start;
+                gap: 10px;
+                padding-left: 0;
+            }
+
+            #hello {
+                font-size: 24px;
+                padding-left: 10px; /* Further reduced for small screens */
+                margin-top: 8px;
+            }
+        }
+        @media (min-width: 768px) and (max-width: 1024px) {
+    header {
+        padding: 4px 20px;
+    }
+
+    .header-left {
+        gap: 12px; /* Reduced spacing */
+    }
+
+    #hello {
+        font-size: 28px;
+        padding-left: 80px; /* Slightly reduced */
+    }
+
+    .header-right {
+        gap: 40px; /* Reduced spacing */
+        flex-direction: row; /* Horizontal layout like desktop */
+        align-items: center;
+    }
+
+    .header-right input {
+        padding-right: 30px; /* Reduced spacing */
+    }
+
+    #openSearch {
+        width: 120px;
+        transform: translateX(10px);
+        display: inline-block; /* Same as desktop */
+        margin-left: 300px;
+    }
+
+    #navMenu {
+        max-height: none; /* Always visible like desktop */
+        opacity: 1;
+        flex-direction: row; /* Horizontal layout like desktop */
+        align-items: center;
+        width: auto;
+        padding: 0;
+        background: none;
+        border-top: none;
+        overflow: visible; /* Ensure no clipping */
+    }
+    .login{
+      margin-left:200px;
+    }
+
+    .menu-btn {
+        display: flex; /* Show menu button in tablet view like desktop */
+        padding-right: 30px; /* Reduced spacing */
+    }
+}
+
+/* Hamburger to X transition */
+.menu-btn.active .bar:nth-child(1) {
+  transform: translateY(11px) rotate(55deg);
+}
+
+.menu-btn.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-btn.active .bar:nth-child(3) {
+  transform: translateY(-11px) rotate(-55deg);
+}
+
+    .order-history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 30px 0 20px;
+      font-size: 1.5em;
+      font-weight: lighter;
+      margin-left: 210px;
+    }
+
+    .sort {
+      margin-right: 210px;
+      font-size: 1rem;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .menu-icon {
+      font-size: 1.2em;
+      margin-left: 6px;
+    }
+
+    .order-card {
+      display: flex;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: px;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.08), 8px 0 16px rgba(0,0,0,0.04);      
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+
+    .order-card:hover {
+      transform: scale(1.01);
+    }
+
+    .order-image {
+      width: 140px;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid #eee;
+    }
+
+    .order-image img {
+      max-width: 100px;
+      max-height: 120px;
+    }
+
+    .order-info, .order-status {
+      padding: 15px;
+    }
+
+    .order-info {
+      flex: 1;
+    }
+
+    .order-info h3 {
+      font-size: 1em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      color: #666;
+    }
+
+    .order-info p {
+      font-size: 1.1em;
+      color: #222;
+      margin-bottom: 6px;
+    }
+
+    .order-status {
+      border-left: 1px solid #eee;
+      width: 260px;
+      font-size: 0.9em;
+      color: #444;
+    }
+
+    .order-status p {
+      margin-bottom: 8px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .order-history-header {
+        margin-left: 20px;
+      }
+      .sort{
+        margin-right: 20px
+      }
+      .order-card {
+        flex-direction: column;
+        max-width: 100%;
+      }
+
+      .order-image {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+        padding: 10px;
+      }
+
+      .order-status {
+        border-left: none;
+        border-top: 1px solid #eee;
+        width: 100%;
+      }
+    }
+     .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px; /* hidden initially */
+      width: 250px;
+      height: 100%;
+      background: #ffffff;
+      color: #ffeeee;
+      padding-top: 60px;
+      transition: 0.4s;
+      z-index: 1000;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 12px 20px;
+      text-decoration: none;
+      color: #000000;
+      font-size: 18px;
+      transition: 0.3s;
+      padding: 20px;
+    }
+
+    .sidebar a:hover {
+      background: #e7dede;
+    }
+
+    /* Active class to slide in */
+    .sidebar.active {
+      left: 0;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.5);
+      display: none;
+      z-index: 500;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    /* Page content */
+    #main {
+      padding: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+       .order-history-header {
+        margin-left: 20px;
+      }
+      .sort{
+        margin-right: 20px
+      }
+      .sidebar {
+        width: 200px;
+      }
+      .sidebar a {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+<section id="head">
+<header>
+<div class="header-left">
+<div class="menu">
+<button id="menu-btn" class="menu-btn">
+<span class="bar"></span>
+<span class="bar"></span>
+<span class="bar"></span>
+</button>
+</div>
+<h1 id="hello">ZYRAA</h1>
+</div>
+<div class="header-right" id="navMenu">
+<p id="openSearch" class="search-trigger">Search</p>
+<span class="login">Login</span>
+<span class="add">Add to collection</span>
+</div>
+</header>
+</section>
+  </header>
+  <!-- Sort Section -->
+<section class="order-history-header">
+  <p>Order History</p>
+  <div class="sort">
+    Sort by 
+    <span class="menu-icon">☰</span>
+    <div class="dropdown" id="sortDropdown">
+      <p data-sort="date">Date</p>
+      <p data-sort="price">Price</p>
+      <p data-sort="name">Name</p>
+    </div>
+  </div>
+</section>
+
+  <section id="orders"></section>
+<script>
+  const orders = [
+    { id: "#1", name: "WHITE FIT SHIRT", price: "₹2500", placed: "23/09/2025", delivery: "26/09/2025 (estimated)", image: "https://i.imgur.com/6P7rGAs.png" },
+    { id: "#2", name: "RELAXED LINEN SHIRT", price: "₹3800", placed: "28/09/2025", delivery: "01/10/2025", image: "https://i.imgur.com/BEOfJqL.png" },
+    { id: "#3", name: "REGULAR FIT SHIRT", price: "₹3400", placed: "27/09/2025", delivery: "30/09/2025 (estimated)", image: "https://i.imgur.com/6P7rGAs.png" },
+    { id: "#4", name: "COTTON WHITE SHIRT", price: "₹4200", placed: "30/09/2025", delivery: "03/10/2025", image: "https://i.imgur.com/BEOfJqL.png" }
+  ];
+
+  const ordersContainer = document.getElementById("orders");
+
+  function renderOrders(list) {
+    ordersContainer.innerHTML = "";
+    list.forEach(order => {
+      const card = document.createElement("div");
+      card.className = "order-card";
+      card.innerHTML = `
+        <div class="order-image">
+          <img src="${order.image}" alt="${order.name}" />
+        </div>
+        <div class="order-info">
+          <h3>Order ${order.id}</h3>
+          <p>${order.name}</p>
+          <p>${order.price}</p>
+        </div>
+        <div class="order-status">
+          <p><strong>Order placed:</strong> ${order.placed}</p>
+          <p>${order.delivery.includes("estimated") ? "Estimated delivery" : "Delivered"}: ${order.delivery.replace(" (estimated)", "")}</p>
+          <p><strong>Shipping to:</strong><br>Chennai 600001<br>Pallavaram</p>
+        </div>
+      `;
+      ordersContainer.appendChild(card);
+    });
+  }
+
+  renderOrders(orders);
+
+  // Toggle dropdown
+  const sortBtn = document.querySelector(".sort");
+  const dropdown = document.getElementById("sortDropdown");
+
+  sortBtn.addEventListener("click", () => {
+    dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
+  });
+
+  // Sorting logic
+  dropdown.querySelectorAll("p").forEach(option => {
+    option.addEventListener("click", () => {
+      const sortType = option.getAttribute("data-sort");
+      let sortedOrders = [...orders];
+
+      if (sortType === "date") {
+        sortedOrders.sort((a, b) => new Date(b.placed.split("/").reverse().join("-")) - new Date(a.placed.split("/").reverse().join("-")));
+      } else if (sortType === "price") {
+        sortedOrders.sort((a, b) => parseInt(b.price.replace(/[₹,]/g, "")) - parseInt(a.price.replace(/[₹,]/g, "")));
+      } else if (sortType === "name") {
+        sortedOrders.sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      renderOrders(sortedOrders);
+      dropdown.style.display = "none";
+    });
+  });
+
+  // Existing menu button logic
+  document.getElementById('menu-btn').addEventListener('click', function () {
+    this.classList.toggle('active');
+    document.getElementById('navMenu').classList.toggle('show');
+  });
+
+  document.getElementById("openSearch").addEventListener("click", function() {
+    window.location.href = "search.html";
+  });
+
+  document.querySelectorAll('#navMenu > span, #navMenu > p').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 767) {
+        document.getElementById('navMenu').classList.remove('show');
+        document.getElementById('menu-btn').classList.remove('active');
+      }
+    });
+  });
+</script>
+
+  <script>
+    const orders = [
+      {  
+        id: "#1",
+        name: "WHITE FIT SHIRT",
+        price: "₹2500",
+        placed: "23/09/2025",
+        delivery: "26/09/2025 (estimated)",
+        image: "https://i.imgur.com/6P7rGAs.png"
+      },
+      {
+        id: "#2",
+        name: "RELAXED LINEN SHIRT",
+        price: "₹3800",
+        placed: "28/09/2025",
+        delivery: "01/10/2025",
+        image: "https://i.imgur.com/BEOfJqL.png"
+      },
+      {
+        id: "#3",
+        name: "REGULAR FIT SHIRT",
+        price: "₹3400",
+        placed: "27/09/2025",
+        delivery: "30/09/2025 (estimated)",
+        image: "https://i.imgur.com/6P7rGAs.png"
+      },
+      {
+        id: "#4",
+        name: "COTTON WHITE SHIRT",
+        price: "₹4200",
+        placed: "30/09/2025",
+        delivery: "03/10/2025",
+        image: "https://i.imgur.com/BEOfJqL.png"
+      }
+    ];
+
+    const ordersContainer = document.getElementById("orders");
+
+    orders.forEach(order => {
+      const card = document.createElement("div");
+      card.className = "order-card";
+      card.innerHTML = `
+        <div class="order-image">
+          <img src="${order.image}" alt="${order.name}" />
+        </div>
+        <div class="order-info">
+          <h3>Order ${order.id}</h3>
+          <p>${order.name}</p>
+          <p>${order.price}</p>
+        </div>
+        <div class="order-status">
+          <p><strong>Order placed:</strong> ${order.placed}</p>
+          <p>${order.delivery.includes("estimated") ? "Estimated delivery" : "Delivered"}: ${order.delivery.replace(" (estimated)", "")}</p>
+          <p><strong>Shipping to:</strong><br>Chennai 600001<br>Pallavaram</p>
+        </div>
+      `;
+      ordersContainer.appendChild(card);
+    });
+
+    document.getElementById('menu-btn').addEventListener('click', function () {
+      this.classList.toggle('active');
+    });
+
+        document.getElementById('menu-btn').addEventListener('click', function () {
+            this.classList.toggle('active');
+            document.getElementById('navMenu').classList.toggle('show');
+        });
+
+        document.getElementById("openSearch").addEventListener("click", function() {
+            window.location.href = "search.html";
+        });
+
+        document.querySelectorAll('#navMenu > span, #navMenu > p').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 767) {
+                    document.getElementById('navMenu').classList.remove('show');
+                    document.getElementById('menu-btn').classList.remove('active');
+                }
+            });
+        });
+        // Sort Dropdown Logic
+    </script>
+  </script>
+</body>
+</html>
