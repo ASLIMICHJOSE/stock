@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockPulse </title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>📈 StockPulse</h1>
+    <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+  </header>
+
+  <div class="content">
+    <p class="welcome" id="welcomeText">Welcome, Trader!</p>
+
+    <div class="stock-box">
+      <h2>Live Stock Updates</h2>
+      <p id="stockData">Loading...</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Protect dashboard
+    if (!localStorage.getItem("loggedIn")) {
+      window.location.href = "index.html";
+    }
+
+    // Show username
+    const user = JSON.parse(localStorage.getItem("stockpulseUser"));
+    if (user) {
+      document.getElementById("welcomeText").textContent = `Welcome, ${user.user}! 🚀`;
+    }
+
+    // Example: Placeholder live stock update (replace with API later)
+    setInterval(() => {
+      const price = (Math.random() * 1000 + 100).toFixed(2);
+      document.getElementById("stockData").textContent = `AAPL: $${price}`;
+    }, 2000);
+  </script>
+</body>
+</html>
