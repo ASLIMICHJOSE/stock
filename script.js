@@ -1,64 +1,46 @@
-// Show login form
-function showLogin() {
-  document.getElementById("auth-box").innerHTML = `
-    <h2>Welcome Back</h2>
-    <input type="text" id="loginUser" placeholder="Username" required>
-    <input type="password" id="loginPass" placeholder="Password" required>
-    <button class="submit-btn" onclick="login()">Login</button>
-  `;
-  document.getElementById("loginTab").classList.add("active");
-  document.getElementById("registerTab").classList.remove("active");
+// Sample stock data
+let stocks = [
+  { name: "AAPL", price: 175 },
+  { name: "GOOGL", price: 2800 },
+  { name: "AMZN", price: 3450 },
+  { name: "MSFT", price: 300 },
+  { name: "TSLA", price: 750 }
+];
+
+const container = document.getElementById('stocksContainer');
+
+// Function to create stock cards
+function renderStocks() {
+  container.innerHTML = '';
+  stocks.forEach(stock => {
+    const card = document.createElement('div');
+    card.className = 'stock-card';
+    card.innerHTML = `
+      <div class="stock-name">${stock.name}</div>
+      <div class="stock-price" id="price-${stock.name}">${stock.price.toFixed(2)}</div>
+      <div class="stock-change" id="change-${stock.name}">0.00</div>
+    `;
+    container.appendChild(card);
+  });
 }
 
-// Show register form
-function showRegister() {
-  document.getElementById("auth-box").innerHTML = `
-    <h2>Create Account</h2>
-    <input type="text" id="regUser" placeholder="Username" required>
-    <input type="email" id="regEmail" placeholder="Email" required>
-    <input type="password" id="regPass" placeholder="Password" required>
-    <button class="submit-btn" onclick="register()">Register</button>
-  `;
-  document.getElementById("registerTab").classList.add("active");
-  document.getElementById("loginTab").classList.remove("active");
+// Function to update prices
+function updatePrices() {
+  stocks.forEach(stock => {
+    const change = (Math.random() * 10 - 5); // -5 to +5
+    stock.price += change;
+
+    const priceEl = document.getElementById(`price-${stock.name}`);
+    const changeEl = document.getElementById(`change-${stock.name}`);
+
+    priceEl.innerText = stock.price.toFixed(2);
+    changeEl.innerText = change.toFixed(2);
+    changeEl.className = 'stock-change ' + (change >= 0 ? 'up' : 'down');
+  });
 }
 
-// Register function
-function register() {
-  const user = document.getElementById("regUser").value.trim();
-  const email = document.getElementById("regEmail").value.trim();
-  const pass = document.getElementById("regPass").value.trim();
+// Initial render
+renderStocks();
 
-  if (user && email && pass) {
-    localStorage.setItem("stockpulseUser", JSON.stringify({ user, email, pass }));
-    alert("✅ Registration successful! Please login.");
-    showLogin();
-  } else {
-    alert("⚠️ Please fill in all fields.");
-  }
-}
-
-// Login function
-function login() {
-  const user = document.getElementById("loginUser").value.trim();
-  const pass = document.getElementById("loginPass").value.trim();
-  const stored = JSON.parse(localStorage.getItem("stockpulseUser"));
-
-  if (stored && stored.user === user && stored.pass === pass) {
-    localStorage.setItem("loggedIn", "true");
-    window.location.href = "index.html";
-  } else {
-    alert("❌ Invalid credentials.");
-  }
-}
-
-// Logout function (used in dashboard)
-function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "login.html";
-}
-
-// Default tab on index.html
-if (document.getElementById("auth-box")) {
-  showLogin();
-}
+// Update prices every 2 seconds
+setInterval(updatePrices, 2000);
