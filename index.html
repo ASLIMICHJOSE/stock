@@ -1,44 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockPulse </title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Pluse Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-  <header>
-    <h1>📈 StockPulse</h1>
-    <button class="logout-btn" onclick="logout()">🚪 Logout</button>
-  </header>
+<body class="bg-gray-900 text-white font-sans">
 
-  <div class="content">
-    <p class="welcome" id="welcomeText">Welcome, Trader!</p>
+<!-- Header -->
+<header class="bg-gray-800 shadow-md p-4 flex justify-between items-center">
+  <div class="flex items-center space-x-3">
+    <img src="https://img.icons8.com/fluency/48/stocks.png" alt="Logo" class="w-10 h-10">
+    <h1 class="text-2xl font-bold">Stock Pluse</h1>
+  </div>
+  <nav class="space-x-6">
+    <a href="#" class="hover:text-green-400">Dashboard</a>
+    <a href="#" class="hover:text-green-400">Markets</a>
+    <a href="#" class="hover:text-green-400">News</a>
+    <a href="#" class="hover:text-green-400">Analytics</a>
+  </nav>
+</header>
 
-    <div class="stock-box">
-      <h2>Live Stock Updates</h2>
-      <p id="stockData">Loading...</p>
+<!-- Market Overview -->
+<section class="p-6">
+  <h2 class="text-xl font-semibold mb-4">📊 Market Overview</h2>
+  <div id="market-overview" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div class="market-card bg-gray-800 p-4 rounded-lg shadow-md">
+      <h3 class="text-sm text-gray-400">Sensex</h3>
+      <p class="text-2xl font-bold" id="sensex-price">--</p>
+      <p class="text-xs" id="sensex-change">--</p>
+    </div>
+    <div class="market-card bg-gray-800 p-4 rounded-lg shadow-md">
+      <h3 class="text-sm text-gray-400">Nifty 50</h3>
+      <p class="text-2xl font-bold" id="nifty-price">--</p>
+      <p class="text-xs" id="nifty-change">--</p>
+    </div>
+    <div class="market-card bg-gray-800 p-4 rounded-lg shadow-md">
+      <h3 class="text-sm text-gray-400">Dow Jones</h3>
+      <p class="text-2xl font-bold" id="dow-price">--</p>
+      <p class="text-xs" id="dow-change">--</p>
+    </div>
+    <div class="market-card bg-gray-800 p-4 rounded-lg shadow-md">
+      <h3 class="text-sm text-gray-400">NASDAQ</h3>
+      <p class="text-2xl font-bold" id="nasdaq-price">--</p>
+      <p class="text-xs" id="nasdaq-change">--</p>
     </div>
   </div>
+</section>
 
-  <script src="script.js"></script>
-  <script>
-    // Protect dashboard
-    if (!localStorage.getItem("loggedIn")) {
-      window.location.href = "index.html";
+<!-- Live Stock Table -->
+<section class="p-6 bg-gray-800 rounded-lg shadow-md mx-4">
+  <h2 class="text-xl font-semibold mb-4">🔥 Live Stock Prices</h2>
+  <table class="w-full text-left table-fixed border-collapse">
+    <thead>
+      <tr class="border-b border-gray-700">
+        <th class="py-2 w-1/4">Symbol</th>
+        <th class="py-2 w-1/4">Price</th>
+        <th class="py-2 w-1/4">Change %</th>
+        <th class="py-2 w-1/4">Watchlist</th>
+      </tr>
+    </thead>
+    <tbody id="stock-table"></tbody>
+  </table>
+</section>
+
+<!-- Multi-Stock Chart -->
+<section class="p-6">
+  <h2 class="text-xl font-semibold mb-4">📈 Watchlist Chart</h2>
+  <div class="bg-gray-800 p-4 rounded-lg shadow-md">
+    <canvas id="stockChart" height="150"></canvas>
+  </div>
+</section>
+
+<!-- News Section -->
+<section class="p-6">
+  <h2 class="text-xl font-semibold mb-4">📰 Latest News</h2>
+  <div id="news-section" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-center p-4 mt-6">
+  <p class="text-gray-400">© 2025 Stock Pluse. All rights reserved.</p>
+</footer>
+
+<script>
+const API_KEY = "d36mn8hr01qtvbtibm9gd36mn8hr01qtvbtibma0";
+const stocks = ["AAPL","TSLA","MSFT","GOOGL","AMZN","NFLX","META","NVDA"];
+let watchlist = [];
+const colors = ["#22c55e","#f59e0b","#3b82f6","#ec4899","#f87171","#8b5cf6","#14b8a6","#facc15"];
+
+// Chart.js setup
+const ctx = document.getElementById("stockChart").getContext("2d");
+const stockChart = new Chart(ctx,{
+  type:"line",
+  data:{ labels:[], datasets:[] },
+  options:{ responsive:true, scales:{ x:{ ticks:{ color:"#aaa" } }, y:{ ticks:{ color:"#aaa" } } } }
+});
+
+// Fetch stock data
+async function fetchStock(symbol){
+  const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`);
+  return res.json();
+}
+
+// Market Overview update
+async function updateMarkets(){
+  const indices = {
+    "sensex":["BSE:SENSEX","sensex-price","sensex-change"],
+    "nifty":["NSE:NIFTY 50","nifty-price","nifty-change"],
+    "dow":["^DJI","dow-price","dow-change"],
+    "nasdaq":["^IXIC","nasdaq-price","nasdaq-change"]
+  };
+  for(const [key,[symbol,priceId,changeId]] of Object.entries(indices)){
+    try{
+      const data = await fetchStock(symbol);
+      const price = data.c.toFixed(2);
+      const change = data.dp !== null ? data.dp.toFixed(2) : 0;
+      document.getElementById(priceId).innerText = price;
+      const el = document.getElementById(changeId);
+      el.innerText = (change>=0?"+":"")+change+"%";
+      el.className = change>=0?"text-green-400 text-xs":"text-red-400 text-xs";
+    }catch(err){console.error(err);}
+  }
+}
+
+// Update stock table (in-place)
+async function updateStocks(){
+  const table = document.getElementById("stock-table");
+  if(!table.rows.length){
+    for(let i=0;i<stocks.length;i++){
+      const row = table.insertRow();
+      row.insertCell(0).innerText = stocks[i];
+      row.insertCell(1).innerText = "--";
+      row.insertCell(2).innerText = "--";
+      const btn = document.createElement("button");
+      btn.className = "px-2 py-1 bg-green-600 rounded text-white";
+      btn.innerText = "Add";
+      btn.onclick = ()=>toggleWatch(stocks[i],btn);
+      row.insertCell(3).appendChild(btn);
     }
+  }
+  for(let i=0;i<stocks.length;i++){
+    const symbol = stocks[i];
+    try{
+      const data = await fetchStock(symbol);
+      const row = table.rows[i];
+      row.cells[1].innerText = "$"+data.c.toFixed(2);
+      const change = data.dp !== null? data.dp.toFixed(2):0;
+      row.cells[2].innerText = (change>=0?"+":"")+change+"%";
+      row.cells[2].className = change>=0?"text-green-400":"text-red-400";
+    }catch(err){console.error(err);}
+  }
+}
 
-    // Show username
-    const user = JSON.parse(localStorage.getItem("stockpulseUser"));
-    if (user) {
-      document.getElementById("welcomeText").textContent = `Welcome, ${user.user}! 🚀`;
-    }
+// Toggle watchlist
+function toggleWatch(symbol,btn){
+  if(watchlist.includes(symbol)){
+    watchlist = watchlist.filter(s=>s!==symbol);
+    stockChart.data.datasets = stockChart.data.datasets.filter(d=>d.label!==symbol);
+    btn.innerText="Add";
+  }else{
+    watchlist.push(symbol);
+    const color = colors[watchlist.length % colors.length];
+    stockChart.data.datasets.push({
+      label:symbol,
+      data:[],
+      borderColor:color,
+      backgroundColor:color+"33",
+      tension:0.4
+    });
+    btn.innerText="Remove";
+  }
+}
 
-    // Example: Placeholder live stock update (replace with API later)
-    setInterval(() => {
-      const price = (Math.random() * 1000 + 100).toFixed(2);
-      document.getElementById("stockData").textContent = `AAPL: $${price}`;
-    }, 2000);
-  </script>
+// Update multi-stock chart
+async function updateChart(){
+  if(!watchlist.length) return;
+  const now = new Date().toLocaleTimeString();
+  if(stockChart.data.labels.length>20) stockChart.data.labels.shift();
+  stockChart.data.labels.push(now);
+  for(let ds of stockChart.data.datasets){
+    try{
+      const data = await fetchStock(ds.label);
+      const price = data.c;
+      if(ds.data.length>20) ds.data.shift();
+      ds.data.push(price);
+    }catch(err){console.error(err);}
+  }
+  stockChart.update();
+}
+
+// Update News
+async function updateNews(){
+  const newsContainer = document.getElementById("news-section");
+  newsContainer.innerHTML="";
+  try{
+    const res = await fetch(`https://finnhub.io/api/v1/news?category=general&token=${API_KEY}`);
+    const news = await res.json();
+    news.slice(0,6).forEach(item=>{
+      const card = document.createElement("div");
+      card.className="bg-gray-800 p-4 rounded-lg shadow-md";
+      card.innerHTML=`<a href="${item.url}" target="_blank" class="font-bold hover:text-green-400">${item.headline}</a><p class="text-gray-400 text-xs mt-2">${new Date(item.datetime*1000).toLocaleString()}</p>`;
+      newsContainer.appendChild(card);
+    });
+  }catch(err){console.error(err);}
+}
+
+// Refresh everything
+setInterval(updateMarkets,3000);
+setInterval(updateStocks,3000);
+setInterval(updateChart,3000);
+setInterval(updateNews,10000);
+
+updateMarkets();
+updateStocks();
+updateChart();
+updateNews();
+</script>
 </body>
 </html>
