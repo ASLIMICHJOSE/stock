@@ -1,44 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stock Dashboard</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- TradingView Lightweight Charts -->
+  <script src="https://unpkg.com/lightweight-charts@4.2.1/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
-  <!-- HEADER -->
-  <header>
-    <div class="logo">📈 StockWatch</div>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">Markets</a>
-      <a href="#">Contact</a>
-    </nav>
-  </header>
+ 
 
-  <main class="container">
+  <!-- MAIN -->
+  <div class="main">
+    <!-- HEADER -->
+    <header class="topbar">
+  <div class="logo">📈 StockWatch</div>
+  <input type="text" placeholder="🔍 Search stocks..." class="search">
+  <div class="header-icons">
+    <span class="icon">🔔</span>
+    <span class="icon">⚙️</span>
+    <span class="profile">👤</span>
+  </div>
+</header>
 
-  <!-- STOCK CARDS -->
-  <div id="stocksContainer" class="stocks-grid"></div>
 
-  <!-- ADD NEW STOCK SECTION -->
-  <section class="add-stock">
-    <h2>Add New Stock</h2>
-    <div class="add-stock-form">
-      <input type="text" id="newStockName" placeholder="Stock Name">
-      <input type="number" id="newStockPrice" placeholder="Initial Price" min="0">
-      <button onclick="addStock()">Add Stock</button>
-    </div>
-  </section>
+    <!-- DASHBOARD GRID -->
+    <main class="dashboard">
+      <!-- STOCKS -->
+      <section class="card stocks">
+        <h2>Stocks</h2>
+        <div id="stocksContainer" class="stocks-grid"></div>
+      </section>
 
-  <!-- LATEST UPDATES -->
-  <section class="updates">
-    <h2>Latest Updates</h2>
-    <div id="updatesList" class="updates-feed"></div>
-  </section>
+      <!-- ADD STOCK -->
+      <section class="card add-stock">
+        <h2>Add New Stock</h2>
+        <div class="add-stock-form">
+          <input type="text" id="newStockName" placeholder="Stock Name">
+          <input type="number" id="newStockPrice" placeholder="Initial Price" min="0">
+          <button onclick="addStock()">Add Stock</button>
+        </div>
+      </section>
 
-</main>
+      <!-- UPDATES -->
+      <section class="card updates">
+        <h2>Latest Updates</h2>
+        <div id="updatesList" class="updates-feed"></div>
+      </section>
+
+      <!-- REAL-TIME CHART -->
+      <section class="card chart">
+        <h2>Market Overview</h2>
+        <div id="chartContainer" style="height:300px;"></div>
+      </section>
+    </main>
+  </div>
+
 <script src="script.js"></script>
 </body>
 </html>
