@@ -7,16 +7,38 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- HEADER -->
   <header>
-    <h1>Real-Time Stock Dashboard</h1>
+    <div class="logo">📈 StockWatch</div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Markets</a>
+      <a href="#">Contact</a>
+    </nav>
   </header>
 
   <main class="container">
-    <div id="stocksContainer" class="stocks-grid">
-      <!-- Stock cards will be populated here -->
-    </div>
-  </main>
 
+  <!-- STOCK CARDS -->
+  <div id="stocksContainer" class="stocks-grid"></div>
+
+  <!-- ADD NEW STOCK SECTION -->
+  <section class="add-stock">
+    <h2>Add New Stock</h2>
+    <div class="add-stock-form">
+      <input type="text" id="newStockName" placeholder="Stock Name">
+      <input type="number" id="newStockPrice" placeholder="Initial Price" min="0">
+      <button onclick="addStock()">Add Stock</button>
+    </div>
+  </section>
+
+  <!-- LATEST UPDATES -->
+  <section class="updates">
+    <h2>Latest Updates</h2>
+    <div id="updatesList" class="updates-feed"></div>
+  </section>
+
+</main>
 <script src="script.js"></script>
 </body>
 </html>
