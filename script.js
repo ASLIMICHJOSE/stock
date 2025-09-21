@@ -33,18 +33,20 @@ function updatePrices() {
     const priceEl = document.getElementById(`price-${stock.name}`);
     const changeEl = document.getElementById(`change-${stock.name}`);
 
-    priceEl.innerText = stock.price.toFixed(2);
-    changeEl.innerText = change.toFixed(2);
-    changeEl.className = 'stock-change ' + (change >= 0 ? 'up' : 'down');
+    if (priceEl && changeEl) {
+      priceEl.innerText = stock.price.toFixed(2);
+      changeEl.innerText = change.toFixed(2);
+      changeEl.className = 'stock-change ' + (change >= 0 ? 'up' : 'down');
+    }
 
     // Add update card
     const div = document.createElement('div');
-    div.className = 'update-card ' + (change >=0 ? 'up' : 'down');
-    div.innerText = `${stock.name} price ${change >=0 ? 'increased' : 'decreased'} by ${change.toFixed(2)}`;
+    div.className = 'update-card ' + (change >= 0 ? 'up' : 'down');
+    div.innerText = `${stock.name} price ${change >= 0 ? 'increased' : 'decreased'} by ${change.toFixed(2)}`;
     updatesFeed.prepend(div);
 
     // Limit last 10 updates
-    if(updatesFeed.childElementCount > 10){
+    if (updatesFeed.childElementCount > 10) {
       updatesFeed.removeChild(updatesFeed.lastChild);
     }
   });
@@ -55,19 +57,20 @@ function addStock() {
   const name = document.getElementById('newStockName').value.trim();
   const price = parseFloat(document.getElementById('newStockPrice').value);
 
-  if(!name || isNaN(price)){
+  if (!name || isNaN(price)) {
     alert("Please enter valid stock name and price!");
     return;
   }
 
   // Check for duplicate stock
-  if(stocks.some(s => s.name.toUpperCase() === name.toUpperCase())){
+  if (stocks.some(s => s.name.toUpperCase() === name.toUpperCase())) {
     alert("Stock already exists!");
     return;
   }
 
   stocks.push({ name: name.toUpperCase(), price });
   renderStocks();
+  updatePrices(); // ✅ ensure new stock starts updating immediately
 
   // Clear inputs
   document.getElementById('newStockName').value = '';
