@@ -33,15 +33,31 @@
         <div id="stocksContainer" class="stocks-grid"></div>
       </section>
 
-      <!-- ADD STOCK -->
-      <section class="card add-stock">
-        <h2>Add New Stock</h2>
-        <div class="add-stock-form">
-          <input type="text" id="newStockName" placeholder="Stock Name">
-          <input type="number" id="newStockPrice" placeholder="Initial Price" min="0">
-          <button onclick="addStock()">Add Stock</button>
-        </div>
-      </section>
+     <!-- ADD STOCK TRIGGER -->
+<section class="card add-stock">
+  <h2>Stocks Management</h2>
+  <button class="open-modal-btn" onclick="openAddStockModal()">➕ Add New Stock</button>
+</section>
+
+<!-- ADD STOCK MODAL -->
+<div id="addStockModal" class="modal-overlay">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeAddStockModal()">✖</span>
+    <h2>➕ Add New Stock</h2>
+    <form class="modal-form" onsubmit="addStock(); closeAddStockModal(); return false;">
+      <div class="form-group">
+        <span class="icon">🏷️</span>
+        <input type="text" id="newStockName" placeholder="Stock Name" required>
+      </div>
+      <div class="form-group">
+        <span class="icon">💹</span>
+        <input type="text" id="newStockSymbol" placeholder="Symbol (e.g. AAPL)" maxlength="10" required>
+      </div>
+      <button type="submit" class="modal-btn">Add Stock</button>
+    </form>
+  </div>
+</div>
+
 
       <!-- UPDATES -->
       <section class="card updates">
@@ -61,4 +77,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
