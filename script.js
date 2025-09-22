@@ -170,3 +170,10 @@ window.addEventListener('resize', () => {
   chart.applyOptions({ width: chartContainer.clientWidth });
 });
 
+// Modal controls
+function openAddStockModal() {
+  document.getElementById('addStockModal').style.display = 'flex';
+}
+function closeAddStockModal() {
+  document.getElementById('addStockModal').style.display = 'none';
+}
