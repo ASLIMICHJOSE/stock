@@ -1,15 +1,19 @@
+// 🔑 Replace with your own Finnhub API key
+const API_KEY = "d36mn8hr01qtvbtibm9gd36mn8hr01qtvbtibma0";
+
 let stocks = [
-  { name: "APPLE", price: 175 },
-  { name: "GOOGLE", price: 2800 },
-  { name: "AMAZON", price: 3450 },
-  { name: "MICROSOFT", price: 300 },
-  { name: "TESLA", price: 750 }
+  { symbol: "AAPL", name: "APPLE", price: 0 },
+  { symbol: "GOOGL", name: "GOOGLE", price: 0 },
+  { symbol: "AMZN", name: "AMAZON", price: 0 },
+  { symbol: "MSFT", name: "MICROSOFT", price: 0 },
+  { symbol: "TSLA", name: "TESLA", price: 0 },
+  { symbol: "NVDA", name: "NVIDIA", price: 0 }
 ];
 
 const container = document.getElementById('stocksContainer');
 const updatesFeed = document.getElementById('updatesList');
 
-// Render stock cards
+// RENDER STOCK CARDS
 function renderStocks() {
   container.innerHTML = '';
   stocks.forEach(stock => {
@@ -17,66 +21,152 @@ function renderStocks() {
     card.className = 'stock-card';
     card.innerHTML = `
       <div class="stock-name">${stock.name}</div>
-      <div class="stock-price" id="price-${stock.name}">${stock.price.toFixed(2)}</div>
-      <div class="stock-change" id="change-${stock.name}">0.00</div>
+      <div class="stock-price" id="price-${stock.symbol}">Loading...</div>
+      <div class="stock-change" id="change-${stock.symbol}">--</div>
     `;
     container.appendChild(card);
   });
 }
 
-// Update prices and show updates
-function updatePrices() {
-  stocks.forEach(stock => {
-    const change = (Math.random() * 10 - 5);
-    stock.price += change;
-
-    const priceEl = document.getElementById(`price-${stock.name}`);
-    const changeEl = document.getElementById(`change-${stock.name}`);
-
-    if (priceEl && changeEl) {
-      priceEl.innerText = stock.price.toFixed(2);
-      changeEl.innerText = change.toFixed(2);
-      changeEl.className = 'stock-change ' + (change >= 0 ? 'up' : 'down');
+// FETCH PRICE FROM FINNHUB
+async function fetchStockPrice(symbol) {
+  const url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`;
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (data && data.c) {   // `c` = current price
+      return parseFloat(data.c);
     }
-
-    // Add update card
-    const div = document.createElement('div');
-    div.className = 'update-card ' + (change >= 0 ? 'up' : 'down');
-    div.innerText = `${stock.name} price ${change >= 0 ? 'increased' : 'decreased'} by ${change.toFixed(2)}`;
-    updatesFeed.prepend(div);
-
-    // Limit last 10 updates
-    if (updatesFeed.childElementCount > 10) {
-      updatesFeed.removeChild(updatesFeed.lastChild);
-    }
-  });
+  } catch (err) {
+    console.error("Error fetching price for", symbol, err);
+  }
+  return null;
 }
 
-// Function to add new stock
+// UPDATE ALL STOCKS
+async function updatePricesReal() {
+  for (const stock of stocks) {
+    const oldPrice = stock.price;
+    const newPrice = await fetchStockPrice(stock.symbol);
+
+    if (newPrice !== null) {
+      stock.price = newPrice;
+
+      const priceEl = document.getElementById(`price-${stock.symbol}`);
+      const changeEl = document.getElementById(`change-${stock.symbol}`);
+
+      if (priceEl && changeEl) {
+        priceEl.innerText = newPrice.toFixed(2);
+
+        const change = oldPrice ? newPrice - oldPrice : 0;
+        changeEl.innerText = change.toFixed(2);
+        changeEl.className = 'stock-change ' + (change >= 0 ? 'up' : 'down');
+      }
+
+      // Add update feed entry
+      const div = document.createElement('div');
+      div.className = 'update-card ' + (newPrice >= oldPrice ? 'up' : 'down');
+      div.innerText = `${stock.name} price ${newPrice >= oldPrice ? 'increased' : 'decreased'} to ${newPrice.toFixed(2)}`;
+      updatesFeed.prepend(div);
+
+      if (updatesFeed.childElementCount > 10) {
+        updatesFeed.removeChild(updatesFeed.lastChild);
+      }
+    }
+  }
+}
+
+// ADD NEW STOCK
 function addStock() {
   const name = document.getElementById('newStockName').value.trim();
-  const price = parseFloat(document.getElementById('newStockPrice').value);
+  const symbol = document.getElementById('newStockSymbol').value.trim().toUpperCase();
 
-  if (!name || isNaN(price)) {
-    alert("Please enter valid stock name and price!");
+  if (!name || !symbol) {
+    alert("Please enter valid stock name and symbol!");
     return;
   }
-
-  // Check for duplicate stock
-  if (stocks.some(s => s.name.toUpperCase() === name.toUpperCase())) {
+  if (stocks.some(s => s.symbol === symbol)) {
     alert("Stock already exists!");
     return;
   }
 
-  stocks.push({ name: name.toUpperCase(), price });
+  stocks.push({ symbol, name, price: 0 });
   renderStocks();
-  updatePrices(); // ✅ ensure new stock starts updating immediately
+  updatePricesReal(); // fetch immediately
 
-  // Clear inputs
   document.getElementById('newStockName').value = '';
-  document.getElementById('newStockPrice').value = '';
+  document.getElementById('newStockSymbol').value = '';
 }
 
-// Initial render
+// INITIALIZE
 renderStocks();
-setInterval(updatePrices, 2000);
+setInterval(updatePricesReal, 5000); // update every 5 sec
+updatePricesReal();
+
+
+// === ADVANCED MARKET OVERVIEW CHART ===
+const chartContainer = document.getElementById('chartContainer');
+const chart = LightweightCharts.createChart(chartContainer, {
+  layout: {
+    background: { color: 'transparent' },
+    textColor: '#e0e0e0',
+    fontFamily: 'Segoe UI',
+  },
+  grid: {
+    vertLines: { color: 'rgba(255,255,255,0.1)' },
+    horzLines: { color: 'rgba(255,255,255,0.1)' },
+  },
+  crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+  rightPriceScale: {
+    borderVisible: false,
+  },
+  timeScale: {
+    borderVisible: false,
+  },
+  width: chartContainer.clientWidth,
+  height: 320,
+});
+
+// Assign each stock a series & color
+const colors = ['#00ccff', '#00ff99', '#ffcc00', '#ff4d4d', '#9b59b6', '#f39c12'];
+const seriesMap = {};
+stocks.forEach((stock, i) => {
+  seriesMap[stock.symbol] = chart.addLineSeries({
+    color: colors[i % colors.length],
+    lineWidth: 2,
+    title: stock.symbol,
+  });
+});
+
+// Data storage
+const stockData = {};
+stocks.forEach(s => (stockData[s.symbol] = []));
+
+function updateMarketChart() {
+  const now = Math.floor(Date.now() / 1000);
+  stocks.forEach(stock => {
+    if (stock.price) {
+      stockData[stock.symbol].push({ time: now, value: stock.price });
+      seriesMap[stock.symbol].setData(stockData[stock.symbol].slice(-50));
+    }
+  });
+}
+
+const legendEl = document.getElementById('legend');
+function updateLegend() {
+  legendEl.innerHTML = '';
+  stocks.forEach((stock, i) => {
+    if (stock.price) {
+      const span = document.createElement('span');
+      span.innerHTML = `<div class="dot" style="background:${colors[i % colors.length]}"></div> 
+        <b>${stock.symbol}</b>: ${stock.price.toFixed(2)}`;
+      legendEl.appendChild(span);
+    }
+  });
+}
+
+// Resize dynamically
+window.addEventListener('resize', () => {
+  chart.applyOptions({ width: chartContainer.clientWidth });
+});
+
