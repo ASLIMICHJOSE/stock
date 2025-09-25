@@ -222,3 +222,207 @@ const styleEl = document.createElement("style");
 styleEl.innerText = addStockBtnStyles;
 document.head.appendChild(styleEl);
 
+// Create notification dropdown
+const notifPanel = document.createElement("div");
+notifPanel.id = "notifPanel";
+notifPanel.innerHTML = `
+  <h3>🔔 Notifications</h3>
+  <ul>
+    <li>No new alerts</li>
+  </ul>
+`;
+notifPanel.style.cssText = `
+  position: absolute;
+  top: 60px;
+  right: 80px;
+  background: rgba(25,35,45,0.95);
+  color: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  display: none;
+  width: 220px;
+`;
+
+// Add to body
+document.body.appendChild(notifPanel);
+
+// Toggle on click
+document.querySelector(".icon:nth-child(1)").addEventListener("click", () => {
+  notifPanel.style.display = notifPanel.style.display === "block" ? "none" : "block";
+});
+
+const settingsPanel = document.createElement("div");
+settingsPanel.id = "settingsPanel";
+settingsPanel.innerHTML = `
+  <h3>⚙️ Settings</h3>
+  <label>
+    ⏱ Refresh:
+    <select id="refreshRate">
+      <option value="5000">5 sec</option>
+      <option value="10000">10 sec</option>
+      <option value="30000">30 sec</option>
+    </select>
+  </label>
+`;
+settingsPanel.style.cssText = `
+  position: absolute;
+  top: 60px;
+  right: 40px;
+  background: rgba(25,35,45,0.95);
+  color: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  display: none;
+  width: 200px;
+`;
+
+document.body.appendChild(settingsPanel);
+
+// Toggle
+document.querySelector(".icon:nth-child(2)").addEventListener("click", () => {
+  settingsPanel.style.display = settingsPanel.style.display === "block" ? "none" : "block";
+});
+
+// Apply refresh rate
+document.getElementById("refreshRate").addEventListener("change", (e) => {
+  clearInterval(window.refreshInterval);
+  window.refreshInterval = setInterval(updatePricesReal, parseInt(e.target.value));
+});
+
+const profilePanel = document.createElement("div");
+profilePanel.id = "profilePanel";
+profilePanel.innerHTML = `
+  <h3>👤 Profile</h3>
+  <ul style="list-style:none;padding:0;margin:0;">
+    <li><a href="#">My Account</a></li>
+    <li><a href="#">Logout</a></li>
+  </ul>
+`;
+profilePanel.style.cssText = `
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  background: rgba(25,35,45,0.95);
+  color: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  display: none;
+  width: 180px;
+`;
+
+document.body.appendChild(profilePanel);
+
+// Toggle
+document.querySelector(".profile").addEventListener("click", () => {
+  profilePanel.style.display = profilePanel.style.display === "block" ? "none" : "block";
+});
+// ========== PANELS ========== //
+
+// Notification Panel
+const notifPanel = document.createElement("div");
+notifPanel.id = "notifPanel";
+notifPanel.innerHTML = `
+  <h3>🔔 Notifications</h3>
+  <ul style="list-style:none; padding:0; margin:0;">
+    <li>No new alerts</li>
+  </ul>
+`;
+notifPanel.style.cssText = `
+  position: absolute;
+  top: 60px;
+  right: 140px;
+  background: rgba(25,35,45,0.95);
+  color: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  display: none;
+  width: 220px;
+  z-index: 3000;
+`;
+document.body.appendChild(notifPanel);
+
+// Settings Panel
+const settingsPanel = document.createElement("div");
+settingsPanel.id = "settingsPanel";
+settingsPanel.innerHTML = `
+  <h3>⚙️ Settings</h3>
+  <label>
+    ⏱ Refresh:
+    <select id="refreshRate">
+      <option value="5000">5 sec</option>
+      <option value="10000">10 sec</option>
+      <option value="30000">30 sec</option>
+    </select>
+  </label>
+`;
+settingsPanel.style.cssText = `
+  position: absolute;
+  top: 60px;
+  right: 90px;
+  background: rgba(25,35,45,0.95);
+  color: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  display: none;
+  width: 200px;
+  z-index: 3000;
+`;
+document.body.appendChild(settingsPanel);
+
+// Profile Panel
+const profilePanel = document.createElement("div");
+profilePanel.id = "profilePanel";
+profilePanel.innerHTML = `
+  <h3>👤 Profile</h3>
+  <ul style="list-style:none;padding:0;margin:0;">
+    <li><a href="#">My Account</a></li>
+    <li><a href="#">Logout</a></li>
+  </ul>
+`;
+profilePanel.style.cssText = `
+  position: absolute;
+  top: 60px;
+  right: 40px;
+  background: rgba(25,35,45,0.95);
+  color: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  display: none;
+  width: 180px;
+  z-index: 3000;
+`;
+document.body.appendChild(profilePanel);
+
+// ========== EVENT LISTENERS ========== //
+document.querySelector(".header-icons .icon:nth-child(1)")
+  .addEventListener("click", () => {
+    notifPanel.style.display = notifPanel.style.display === "block" ? "none" : "block";
+    settingsPanel.style.display = "none";
+    profilePanel.style.display = "none";
+  });
+
+document.querySelector(".header-icons .icon:nth-child(2)")
+  .addEventListener("click", () => {
+    settingsPanel.style.display = settingsPanel.style.display === "block" ? "none" : "block";
+    notifPanel.style.display = "none";
+    profilePanel.style.display = "none";
+  });
+
+document.querySelector(".header-icons .profile")
+  .addEventListener("click", () => {
+    profilePanel.style.display = profilePanel.style.display === "block" ? "none" : "block";
+    notifPanel.style.display = "none";
+    settingsPanel.style.display = "none";
+  });
