@@ -50,6 +50,7 @@ async function updatePricesReal() {
     const newPrice = await fetchStockPrice(stock.symbol);
 
     if (newPrice !== null) {
+      stock.oldPrice = oldPrice; // ✅ keep track of old price
       stock.price = newPrice;
 
       const priceEl = document.getElementById(`price-${stock.symbol}`);
@@ -74,6 +75,7 @@ async function updatePricesReal() {
       }
     }
   }
+  updateHeatmap(); // ✅ update heatmap after prices update
 }
 
 // ADD NEW STOCK
@@ -123,9 +125,42 @@ const chart = LightweightCharts.createChart(chartContainer, {
   timeScale: {
     borderVisible: false,
   },
-  width: chartContainer.clientWidth,
+  width: chartContainer ? chartContainer.clientWidth : 600,
   height: 320,
 });
+
+// === HEATMAP UPDATE ===
+function updateHeatmap() {
+  const heatmapContainer = document.getElementById('heatmapContainer');
+  if (!heatmapContainer) return;
+
+  heatmapContainer.innerHTML = '';
+  stocks.forEach(stock => {
+    if (stock.price) {
+      const change = stock.price - (stock.oldPrice || stock.price);
+      const percentChange = (change / (stock.oldPrice || stock.price || 1)) * 100;
+
+      // Color intensity based on % change
+      let bgColor;
+      if (change > 0) {
+        bgColor = `rgba(0, 255, 100, ${Math.min(0.9, Math.abs(percentChange) / 5)})`;
+      } else if (change < 0) {
+        bgColor = `rgba(255, 70, 70, ${Math.min(0.9, Math.abs(percentChange) / 5)})`;
+      } else {
+        bgColor = "rgba(200,200,200,0.3)";
+      }
+
+      const tile = document.createElement('div');
+      tile.className = 'heatmap-tile';
+      tile.style.background = bgColor;
+      tile.innerHTML = `
+        <div class="heatmap-symbol">${stock.symbol}</div>
+        <div class="heatmap-price">${stock.price.toFixed(2)}</div>
+      `;
+      heatmapContainer.appendChild(tile);
+    }
+  });
+}
 
 // Assign each stock a series & color
 const colors = ['#00ccff', '#00ff99', '#ffcc00', '#ff4d4d', '#9b59b6', '#f39c12'];
@@ -167,7 +202,9 @@ function updateLegend() {
 
 // Resize dynamically
 window.addEventListener('resize', () => {
-  chart.applyOptions({ width: chartContainer.clientWidth });
+  if (chartContainer) {
+    chart.applyOptions({ width: chartContainer.clientWidth });
+  }
 });
 
 // Modal controls
