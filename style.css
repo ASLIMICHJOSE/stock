@@ -5,7 +5,7 @@ body {
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: #fff;
 }
-
+.
 /* HEADER (modern with icons) */
 .topbar {
   display: flex;
@@ -595,3 +595,4 @@ body {
 .heatmap-price {
   font-size: 1rem;
 }
+
