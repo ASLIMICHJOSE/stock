@@ -10,6 +10,7 @@ import UpdatesFeed from './components/UpdatesFeed';
 import AddStockModal from './components/AddStockModal';
 import AIChatPanel from './components/AIChatPanel';
 import AlertsManager from './components/AlertsManager';
+import PortfolioDonut from './components/PortfolioDonut';
 
 const FINNHUB_API_KEY = "d36mn8hr01qtvbtibm9gd36mn8hr01qtvbtibma0";
 
@@ -50,6 +51,14 @@ export default function App() {
     { id: 2, symbol: "TSLA", targetPrice: 165.00, condition: "below", triggered: false }
   ]);
   const [activeToast, setActiveToast] = useState(null);
+  const [holdings, setHoldings] = useState({
+    AAPL: 15,
+    GOOGL: 20,
+    AMZN: 12,
+    MSFT: 8,
+    TSLA: 15,
+    NVDA: 5
+  });
 
   const intervalRef = useRef(null);
 
@@ -322,7 +331,7 @@ export default function App() {
             <div className="space-y-3">
               <div className="flex justify-between items-center text-xs font-semibold">
                 <span className="text-gray-400">Total Asset Value</span>
-                <span className="text-white">${stocks.reduce((acc, s) => acc + s.price, 0).toFixed(2)}</span>
+                <span className="text-white">${stocks.reduce((acc, s) => acc + s.price * (holdings[s.symbol] || 0), 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center text-xs font-semibold">
                 <span className="text-gray-400">Daily Delta Average</span>
@@ -346,6 +355,8 @@ export default function App() {
               </div>
             </div>
           </div>
+
+          <PortfolioDonut stocks={stocks} holdings={holdings} />
 
           <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg space-y-3.5">
             <h3 className="font-heading font-bold text-sm text-gray-200 tracking-wide uppercase border-b border-white/5 pb-3">
