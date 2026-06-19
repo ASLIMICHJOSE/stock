@@ -12,6 +12,7 @@ import AIChatPanel from './components/AIChatPanel';
 import AlertsManager from './components/AlertsManager';
 import PortfolioDonut from './components/PortfolioDonut';
 import PaperTrading from './components/PaperTrading';
+import CompareDrawer from './components/CompareDrawer';
 
 const FINNHUB_API_KEY = "d36mn8hr01qtvbtibm9gd36mn8hr01qtvbtibma0";
 
@@ -35,6 +36,7 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
 
   // Settings
   const [refreshInterval, setRefreshInterval] = useState(5000); // 5 sec
@@ -325,13 +327,21 @@ export default function App() {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 cursor-pointer bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-black font-extrabold text-xs tracking-wider font-heading uppercase rounded-xl transition-all shadow-md active:scale-95 border border-cyan-400/20"
-          >
-            <Plus className="w-4 h-4 text-black stroke-[3px]" />
-            New Asset
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsCompareOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 cursor-pointer bg-slate-900 border border-white/10 hover:border-indigo-400/40 text-gray-300 hover:text-white font-extrabold text-xs tracking-wider font-heading uppercase rounded-xl transition-all shadow-md active:scale-95"
+            >
+              Compare Assets
+            </button>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 cursor-pointer bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-black font-extrabold text-xs tracking-wider font-heading uppercase rounded-xl transition-all shadow-md active:scale-95 border border-cyan-400/20"
+            >
+              <Plus className="w-4 h-4 text-black stroke-[3px]" />
+              New Asset
+            </button>
+          </div>
         </section>
 
         {/* Live Tickers Grid */}
@@ -472,6 +482,13 @@ export default function App() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddStock={handleAddStock}
+      />
+
+      {/* Compare Drawer */}
+      <CompareDrawer
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+        stocks={stocks}
       />
 
       {/* Slide-out floating drawers for Action panels */}
