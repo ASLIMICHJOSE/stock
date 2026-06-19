@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 export default function StockCard({ stock, isSelected, onClick, history = [] }) {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Landmark, TrendingUp, ArrowDown, ArrowUp } from 'lucide-react';
+import { Landmark, ArrowDown, ArrowUp } from 'lucide-react';
 
 export default function PaperTrading({
   activeSymbol,

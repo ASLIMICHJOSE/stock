@@ -1,4 +1,3 @@
-import React from 'react';
 import { LayoutGrid, TrendingUp, TrendingDown } from 'lucide-react';
 
 export default function Heatmap({ stocks, onSelectSymbol, activeSymbol }) {

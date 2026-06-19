@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Plus, Hash, Tag } from 'lucide-react';
 
 export default function AddStockModal({ isOpen, onClose, onAddStock }) {

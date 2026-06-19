@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowUpRight, ArrowDownRight, Clock, AlertCircle } from 'lucide-react';
 
 export default function UpdatesFeed({ updates }) {

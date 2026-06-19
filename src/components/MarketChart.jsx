@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+/* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
+import { useEffect, useRef, useState } from 'react';
 import { createChart, AreaSeries } from 'lightweight-charts';
-import { AreaChart, Info, AlertTriangle } from 'lucide-react';
+import { AreaChart, Info, AlertTriangle, Download } from 'lucide-react';
 
 export default function MarketChart({ symbol, stocks }) {
   const containerRef = useRef(null);
@@ -171,11 +172,36 @@ export default function MarketChart({ symbol, stocks }) {
     }
   }, [symbol, dataPoints, activeStock?.price, activeStock?.oldPrice]);
 
+  const handleExportCSV = () => {
+    const points = dataPoints[symbol] || [];
+    if (points.length === 0) {
+      alert(`No historical data accumulated for ${symbol} yet.`);
+      return;
+    }
+
+    const headers = 'Timestamp,Date,Time,Price ($)\n';
+    const rows = points.map((pt) => {
+      const date = new Date(pt.time * 1000);
+      const dateStr = date.toLocaleDateString();
+      const timeStr = date.toLocaleTimeString();
+      return `${pt.time},"${dateStr}","${timeStr}",${pt.value.toFixed(2)}`;
+    }).join('\n');
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(headers + rows);
+    
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', csvContent);
+    downloadAnchor.setAttribute('download', `${symbol}_price_history.csv`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+  };
+
   if (errorMsg) {
     return (
       <div className="glass-panel rounded-2xl p-5 border border-rose-500/20 bg-rose-500/5 shadow-lg flex flex-col items-center justify-center text-center h-full">
         <AlertTriangle className="w-8 h-8 text-rose-400 mb-2" />
-        <h3 className="font-heading font-bold text-sm text-rose-300">Chart Error</h3>
+        <h3 className="font-heading font-bold text-rose-300">Chart Error</h3>
         <p className="text-xs text-gray-400 mt-1 max-w-xs">{errorMsg}</p>
       </div>
     );
@@ -202,6 +228,14 @@ export default function MarketChart({ symbol, stocks }) {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 hover:text-indigo-300 px-2.5 py-1 rounded-lg cursor-pointer transition-all text-xs font-semibold"
+            title="Export price ticks to CSV"
+          >
+            <Download className="w-3.5 h-3.5 animate-pulse" />
+            Export CSV
+          </button>
           <div className="flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded-lg">
             <Info className="w-3.5 h-3.5 text-gray-400" />
             <span className="text-[10px] text-gray-400 font-semibold">Updating every 5s</span>

@@ -32,25 +32,26 @@ export default function PortfolioDonut({ stocks, holdings }) {
   const circumference = 2 * Math.PI * radius; // ~314.16
   const center = 64;
 
+  const activeItems = portfolioItems.filter(item => item.value > 0);
+  const segments = [];
   let accumulatedPercent = 0;
 
-  const segments = portfolioItems
-    .filter(item => item.value > 0)
-    .map((item, index) => {
-      const percentage = totalValue > 0 ? (item.value / totalValue) * 100 : 0;
-      const strokeLength = (percentage / 100) * circumference;
-      const strokeOffset = circumference - ((accumulatedPercent / 100) * circumference) + circumference / 4; // Start from top
-      
-      accumulatedPercent += percentage;
-
-      return {
-        ...item,
-        percentage,
-        strokeLength,
-        strokeOffset,
-        color: colors[index % colors.length],
-      };
+  for (let i = 0; i < activeItems.length; i++) {
+    const item = activeItems[i];
+    const percentage = totalValue > 0 ? (item.value / totalValue) * 100 : 0;
+    const strokeLength = (percentage / 100) * circumference;
+    const strokeOffset = circumference - ((accumulatedPercent / 100) * circumference) + circumference / 4; // Start from top
+    
+    segments.push({
+      ...item,
+      percentage,
+      strokeLength,
+      strokeOffset,
+      color: colors[i % colors.length],
     });
+
+    accumulatedPercent += percentage;
+  }
 
   // Active display info
   const activeItem = hoveredIndex !== null ? segments[hoveredIndex] : null;

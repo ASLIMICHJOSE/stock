@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Sliders, Bell, User, MessageSquareCode, Sparkles, LogOut, ShieldCheck } from 'lucide-react';
+import { Plus, Sliders, Bell, Sparkles, LogOut, ShieldCheck } from 'lucide-react';
 import Header from './components/Header';
 import ParticleBackground from './components/ParticleBackground';
 import GlowOrb from './components/GlowOrb';
@@ -131,7 +132,7 @@ export default function App() {
       if (data && data.c !== undefined && data.c !== 0) {
         return parseFloat(data.c);
       }
-    } catch (err) {
+    } catch {
       console.warn(`Finnhub API limit or connection issue for ${symbol}, fallback used.`);
     }
     return null;

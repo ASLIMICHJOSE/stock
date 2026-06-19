@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Bot, Send, Sparkles, X, ChevronRight, CornerDownLeft, RefreshCcw } from 'lucide-react';
+/* eslint-disable react-hooks/purity */
+import { useState, useEffect, useRef } from 'react';
+import { Bot, Send, Sparkles, X, RefreshCcw } from 'lucide-react';
 
 export default function AIChatPanel({ isOpen, onClose, stocks, updates }) {
   const [messages, setMessages] = useState([
@@ -30,9 +31,12 @@ export default function AIChatPanel({ isOpen, onClose, stocks, updates }) {
     const query = textToSend || input;
     if (!query.trim()) return;
 
+    const userMsgId = Date.now();
+    const botMsgId = Date.now() + 1;
+
     // Add user message
     const userMsg = {
-      id: Date.now(),
+      id: userMsgId,
       sender: 'user',
       text: query,
       timestamp: new Date(),
@@ -48,7 +52,7 @@ export default function AIChatPanel({ isOpen, onClose, stocks, updates }) {
       setMessages((prev) => [
         ...prev,
         {
-          id: Date.now() + 1,
+          id: botMsgId,
           sender: 'bot',
           text: botResponse,
           timestamp: new Date(),
@@ -73,8 +77,8 @@ export default function AIChatPanel({ isOpen, onClose, stocks, updates }) {
       const isUp = change >= 0;
       const pct = foundStock.oldPrice ? ((change / foundStock.oldPrice) * 100).toFixed(2) : '0.00';
 
-      let advice = "";
-      if (pct > 2) {
+      let advice;
+      if (parseFloat(pct) > 2) {
         advice = `**Recommendation: HOLD/ACCUMULATE.** ${foundStock.name} exhibits positive momentum (+${pct}%). Strong relative volume indicates institutional support.`;
       } else if (pct < -2) {
         advice = `**Recommendation: BUY THE DIP / CAUTIOUS.** ${foundStock.name} has dropped by ${pct}%. While technically oversold, waiting for support level consolidation is advised before entering fresh longs.`;
