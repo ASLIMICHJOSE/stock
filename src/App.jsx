@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Plus, Sliders, Bell, User, MessageSquareCode, Sparkles, LogOut, ShieldCheck } from 'lucide-react';
 import Header from './components/Header';
 import ParticleBackground from './components/ParticleBackground';
@@ -9,6 +9,7 @@ import Heatmap from './components/Heatmap';
 import UpdatesFeed from './components/UpdatesFeed';
 import AddStockModal from './components/AddStockModal';
 import AIChatPanel from './components/AIChatPanel';
+import AlertsManager from './components/AlertsManager';
 
 const FINNHUB_API_KEY = "d36mn8hr01qtvbtibm9gd36mn8hr01qtvbtibma0";
 
@@ -44,6 +45,11 @@ export default function App() {
     { id: 1, text: "Welcome to StockWatch PRO dashboard!", read: false },
     { id: 2, text: "AI Analyst is ready to analyze your assets.", read: false }
   ]);
+  const [alerts, setAlerts] = useState([
+    { id: 1, symbol: "AAPL", targetPrice: 180.00, condition: "above", triggered: false },
+    { id: 2, symbol: "TSLA", targetPrice: 165.00, condition: "below", triggered: false }
+  ]);
+  const [activeToast, setActiveToast] = useState(null);
 
   const intervalRef = useRef(null);
 
@@ -92,11 +98,12 @@ export default function App() {
         if (Math.abs(priceDiff) > 0.05) {
           const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
           const isUp = priceDiff >= 0;
+          const updateId = Date.now() + Math.random();
 
           // Add to activity updates
           setUpdates((prev) => [
             {
-              id: Date.now() + Math.random(),
+              id: updateId,
               symbol: stock.symbol,
               type: isUp ? 'up' : 'down',
               action: isUp ? 'surged' : 'declined',
@@ -122,6 +129,41 @@ export default function App() {
         };
       })
     );
+
+    // Check price alerts
+    updatedStocks.forEach((stock) => {
+      setAlerts((prevAlerts) => {
+        return prevAlerts.map((alert) => {
+          if (alert.symbol === stock.symbol && !alert.triggered) {
+            const conditionMet =
+              alert.condition === 'above'
+                ? stock.price >= alert.targetPrice
+                : stock.price <= alert.targetPrice;
+
+            if (conditionMet) {
+              const alertId = Date.now() + Math.random();
+              const toastId = Date.now() + Math.random();
+              // Trigger notification
+              setNotifications((prev) => [
+                {
+                  id: alertId,
+                  text: `🚨 Alert: ${alert.symbol} target of $${alert.targetPrice.toFixed(2)} met (Current: $${stock.price.toFixed(2)})`,
+                  read: false,
+                },
+                ...prev,
+              ]);
+              // Trigger toast alert
+              setActiveToast({
+                id: toastId,
+                message: `Alert triggered: ${alert.symbol} reached $${stock.price.toFixed(2)}!`,
+              });
+              return { ...alert, triggered: true };
+            }
+          }
+          return alert;
+        });
+      });
+    });
 
     setStocks(updatedStocks);
   };
@@ -324,6 +366,24 @@ export default function App() {
               </div>
             </div>
           </div>
+
+          <AlertsManager
+            stocks={stocks}
+            alerts={alerts}
+            onAddAlert={(newAlert) => {
+              setAlerts((prev) => [
+                {
+                  id: Date.now(),
+                  ...newAlert,
+                  triggered: false,
+                },
+                 ...prev,
+              ]);
+            }}
+            onDeleteAlert={(id) => {
+              setAlerts((prev) => prev.filter((a) => a.id !== id));
+            }}
+          />
         </section>
 
       </main>
@@ -423,6 +483,22 @@ export default function App() {
               <LogOut className="w-3.5 h-3.5" /> Sign Out
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Toast Alert */}
+      {activeToast && (
+        <div className="fixed bottom-6 right-6 bg-slate-900 border border-indigo-500/50 text-white rounded-xl shadow-2xl p-4 z-[200] max-w-sm animate-fade-in flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-heading">🔔</span>
+            <p className="text-xs font-semibold">{activeToast.message}</p>
+          </div>
+          <button
+            onClick={() => setActiveToast(null)}
+            className="text-xs font-bold text-gray-400 hover:text-white cursor-pointer px-1"
+          >
+            ✕
+          </button>
         </div>
       )}
 
