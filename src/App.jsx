@@ -11,6 +11,7 @@ import AddStockModal from './components/AddStockModal';
 import AIChatPanel from './components/AIChatPanel';
 import AlertsManager from './components/AlertsManager';
 import PortfolioDonut from './components/PortfolioDonut';
+import PaperTrading from './components/PaperTrading';
 
 const FINNHUB_API_KEY = "d36mn8hr01qtvbtibm9gd36mn8hr01qtvbtibma0";
 
@@ -59,6 +60,53 @@ export default function App() {
     TSLA: 15,
     NVDA: 5
   });
+  const [cashBalance, setCashBalance] = useState(10000.00);
+  const [transactions, setTransactions] = useState([]);
+
+  const handleExecuteTrade = (type, symbol, qty, price) => {
+    const cost = qty * price;
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const transactionId = Date.now() + Math.random();
+    const notificationId = Date.now() + Math.random();
+
+    if (type === 'BUY') {
+      setCashBalance((prev) => prev - cost);
+      setHoldings((prev) => ({
+        ...prev,
+        [symbol]: (prev[symbol] || 0) + qty,
+      }));
+    } else {
+      setCashBalance((prev) => prev + cost);
+      setHoldings((prev) => ({
+        ...prev,
+        [symbol]: Math.max(0, (prev[symbol] || 0) - qty),
+      }));
+    }
+
+    setTransactions((prev) => [
+      {
+        id: transactionId,
+        type,
+        symbol,
+        qty,
+        price,
+        time: timestamp,
+      },
+      ...prev,
+    ]);
+
+    setNotifications((prev) => [
+      {
+        id: notificationId,
+        text: `💼 Portfolio: ${type} ${qty} shares of ${symbol} at $${price.toFixed(2)}`,
+        read: false,
+      },
+      ...prev,
+    ]);
+  };
+
+  const totalHoldingsValue = stocks.reduce((acc, s) => acc + s.price * (holdings[s.symbol] || 0), 0);
+  const totalPortfolioValue = cashBalance + totalHoldingsValue;
 
   const intervalRef = useRef(null);
 
@@ -330,16 +378,19 @@ export default function App() {
             
             <div className="space-y-3">
               <div className="flex justify-between items-center text-xs font-semibold">
-                <span className="text-gray-400">Total Asset Value</span>
-                <span className="text-white">${stocks.reduce((acc, s) => acc + s.price * (holdings[s.symbol] || 0), 0).toFixed(2)}</span>
+                <span className="text-gray-400">Net Portfolio Value</span>
+                <span className="text-white">${totalPortfolioValue.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center text-xs font-semibold">
-                <span className="text-gray-400">Daily Delta Average</span>
-                <span className="text-emerald-400 font-bold">+1.84%</span>
+                <span className="text-gray-400">Simulated Net Return</span>
+                <span className={`font-bold ${totalPortfolioValue - 10000.00 >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  {totalPortfolioValue - 10000.00 >= 0 ? '+' : ''}
+                  {(((totalPortfolioValue - 10000.00) / 10000.00) * 100).toFixed(2)}%
+                </span>
               </div>
               <div className="flex justify-between items-center text-xs font-semibold">
-                <span className="text-gray-400">Volatility Score</span>
-                <span className="text-indigo-400 font-bold">Medium</span>
+                <span className="text-gray-400">Cash Balance</span>
+                <span className="text-white">${cashBalance.toFixed(2)}</span>
               </div>
             </div>
 
@@ -357,6 +408,15 @@ export default function App() {
           </div>
 
           <PortfolioDonut stocks={stocks} holdings={holdings} />
+
+          <PaperTrading
+            activeSymbol={activeSymbol}
+            activeStock={stocks.find((s) => s.symbol === activeSymbol)}
+            cashBalance={cashBalance}
+            holdings={holdings}
+            transactions={transactions}
+            onExecuteTrade={handleExecuteTrade}
+          />
 
           <div className="glass-panel rounded-2xl p-5 border border-white/10 shadow-lg space-y-3.5">
             <h3 className="font-heading font-bold text-sm text-gray-200 tracking-wide uppercase border-b border-white/5 pb-3">
